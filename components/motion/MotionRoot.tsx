@@ -4,12 +4,13 @@ import Lenis from "lenis";
 import type { ReactNode } from "react";
 import { useRef } from "react";
 
-import { MOTION_QUERIES } from "@/components/motion/motion.config";
-import { gsap, ScrollTrigger, useGSAP } from "@/components/motion/motion.client";
 import {
-  createHeroScene,
-  type HeroMotionConditions,
-} from "@/components/motion/scenes/hero";
+  MOTION_QUERIES,
+  type MotionConditions,
+} from "@/components/motion/motion.config";
+import { gsap, ScrollTrigger, useGSAP } from "@/components/motion/motion.client";
+import { createAuthorityScene } from "@/components/motion/scenes/authority";
+import { createHeroScene } from "@/components/motion/scenes/hero";
 
 type MotionRootProps = {
   children: ReactNode;
@@ -42,9 +43,16 @@ export function MotionRoot({ children }: MotionRootProps) {
 
       const media = gsap.matchMedia();
 
-      media.add(MOTION_QUERIES, (context) =>
-        createHeroScene(root, context.conditions as HeroMotionConditions),
-      );
+      media.add(MOTION_QUERIES, (context) => {
+        const conditions = context.conditions as MotionConditions;
+        const disposeHero = createHeroScene(root, conditions);
+        const disposeAuthority = createAuthorityScene(root, conditions);
+
+        return () => {
+          disposeAuthority?.();
+          disposeHero?.();
+        };
+      });
 
       let isDisposed = false;
 

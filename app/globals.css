@@ -199,6 +199,7 @@ button, a, input, textarea { outline: none; }
 
 /* AUTHORITY */
 .authority { padding-block: var(--section-space-md) var(--section-space-lg); }
+.authority-wash { display: none; }
 .authority-inner {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -226,6 +227,7 @@ button, a, input, textarea { outline: none; }
   letter-spacing: -0.045em;
   line-height: 1.02;
 }
+[data-motion="authority-react-inner"] { display: inline-block; }
 .authority-conclusion {
   display: flex;
   grid-column: 1 / -1;
@@ -237,7 +239,45 @@ button, a, input, textarea { outline: none; }
   line-height: 0.84;
   text-transform: uppercase;
 }
-.authority-conclusion span:last-child { color: var(--color-olive); }
+.authority-conclusion-mask { display: block; overflow: hidden; }
+.authority-conclusion-mask > span { display: block; }
+.authority-conclusion-mask:last-child > span { color: var(--color-olive); }
+
+/* AUTHORITY — MOTION 02 */
+.authority--motion .authority-stage {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  overflow: clip;
+  isolation: isolate;
+}
+.authority--motion .authority-wash {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  inset: 0;
+  background: var(--color-olive);
+  pointer-events: none;
+}
+.authority--motion .authority-inner {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  grid-template-rows: minmax(0, 1fr);
+  align-items: center;
+  padding-block: clamp(2.5rem, 7vh, 5rem);
+}
+.authority--motion .authority-title,
+.authority--motion .authority-phrases,
+.authority--motion .authority-conclusion {
+  grid-row: 1;
+}
+.authority--motion .authority-phrases { margin-top: 0; }
+.authority--motion .authority-conclusion {
+  grid-column: 1 / -1;
+  align-self: center;
+  margin: 0;
+}
 
 /* REDESIGN */
 .redesign { padding-block: var(--section-space-md); background: var(--color-ink); color: var(--color-paper); }
