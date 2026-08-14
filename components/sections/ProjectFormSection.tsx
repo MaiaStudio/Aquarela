@@ -94,7 +94,6 @@ export function ProjectFormSection() {
     <section className="project-form-section" id="start-project" aria-labelledby="project-form-title">
       <Container>
         <div className="form-heading">
-          <p className="form-section-index">06 — Conversion</p>
           <h2 id="project-form-title">Ready to change how your brand is <em>perceived?</em></h2>
           <p>Tell us a little about the project.</p>
         </div>
@@ -104,9 +103,7 @@ export function ProjectFormSection() {
             <p><strong>Projects start at €1,500.</strong></p>
             <p>Premium execution.<br />Built for growing businesses.</p>
             <div className="form-progress" role="progressbar" aria-label="Project form progress" aria-valuemin={1} aria-valuemax={4} aria-valuenow={step}>
-              {[1, 2, 3, 4].map((number) => (
-                <span className={number <= step ? "is-complete" : ""} key={number} />
-              ))}
+              <span aria-hidden="true">0{step} / 04</span>
               <span className="sr-only">Step {step} of 4</span>
             </div>
           </aside>
