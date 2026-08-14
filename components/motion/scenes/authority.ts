@@ -49,6 +49,18 @@ export function createAuthorityScene(root: HTMLElement, conditions: MotionCondit
   if (conditions.mobile) {
     section.classList.add("authority--mobile-motion");
 
+    const paperColor = getComputedStyle(section).getPropertyValue("--color-paper").trim();
+
+    gsap.set(title, { autoAlpha: 1 });
+    gsap.set([story, react, surprise, remember], { transformOrigin: "0% 50%" });
+    gsap.set(story, { autoAlpha: 0.42, scale: 1, x: 0 });
+    gsap.set(react, { autoAlpha: 0.16, scale: 1, x: 0 });
+    gsap.set(surprise, { autoAlpha: 0.12, scale: 1, x: 0 });
+    gsap.set(remember, { autoAlpha: 0.16, scale: 1, x: 0 });
+    gsap.set(wash, { scaleY: 0, transformOrigin: "50% 100%" });
+    gsap.set(conclusion, { autoAlpha: 0 });
+    gsap.set(conclusionLines, { yPercent: 110 });
+
     const mobileTimeline = gsap.timeline({
       defaults: { ease: MOTION_EASE.scroll },
       scrollTrigger: {
@@ -61,19 +73,9 @@ export function createAuthorityScene(root: HTMLElement, conditions: MotionCondit
       },
     });
 
-    gsap.set(title, { autoAlpha: 0.94, y: 6 });
-    gsap.set([story, react, surprise, remember], { transformOrigin: "0% 50%" });
-    gsap.set(story, { autoAlpha: 0.42, y: 0, scale: 1, x: 0 });
-    gsap.set(react, { autoAlpha: 0.16, scale: 1, x: 0 });
-    gsap.set(surprise, { autoAlpha: 0.12, scale: 1, x: 0 });
-    gsap.set(remember, { autoAlpha: 0.16, scale: 1, x: 0 });
-    gsap.set(wash, { scaleY: 0, transformOrigin: "50% 100%" });
-    gsap.set(conclusion, { autoAlpha: 0 });
-    gsap.set(conclusionLines, { yPercent: 110 });
-
     mobileTimeline
       .addLabel("intro", 0)
-      .to(title, { autoAlpha: 1, y: 0, duration: 8 }, "intro")
+      .to(title, { autoAlpha: 1, duration: 8 }, "intro")
       .addLabel("storyIn", 8)
       .to(story, { autoAlpha: 1, scale: 1.08, x: -6, duration: 8 }, "storyIn")
       .addLabel("storyHold", 16)
@@ -88,28 +90,24 @@ export function createAuthorityScene(root: HTMLElement, conditions: MotionCondit
       .to(wash, { scaleY: 1, duration: 9 }, "surpriseTransition")
       .to(
         surprise,
-        { autoAlpha: 1, color: "var(--color-paper)", scale: 1.3, x: -12, duration: 9 },
+        { autoAlpha: 1, color: paperColor, scale: 1.3, x: -12, duration: 9 },
         "surpriseTransition",
       )
-      .to(title, { autoAlpha: 0.12, color: "var(--color-paper)", duration: 9 }, "surpriseTransition")
-      .to([story, remember], { autoAlpha: 0.1, color: "var(--color-paper)", duration: 9 }, "surpriseTransition")
+      .to(title, { autoAlpha: 0.12, duration: 9 }, "surpriseTransition")
+      .to([story, remember], { autoAlpha: 0.1, duration: 9 }, "surpriseTransition")
       .addLabel("surpriseHold", 59)
       .to(wash, { scaleY: 1, duration: 11 }, "surpriseHold")
       .to(
         surprise,
-        { autoAlpha: 1, color: "var(--color-paper)", scale: 1.3, x: -12, duration: 11 },
+        { autoAlpha: 1, color: paperColor, scale: 1.3, x: -12, duration: 11 },
         "surpriseHold",
       )
       .addLabel("rememberTransition", 70)
       .set(wash, { transformOrigin: "50% 0%" }, "rememberTransition")
-      .to(wash, { scaleY: 0, duration: 7 }, "rememberTransition")
-      .to(
-        surprise,
-        { autoAlpha: 0.08, color: "var(--color-ink)", scale: 1, x: 0, duration: 7 },
-        "rememberTransition",
-      )
-      .to(remember, { autoAlpha: 1, color: "var(--color-ink)", scale: 1.12, x: -4, duration: 7 }, "rememberTransition")
-      .to([title, story, react], { autoAlpha: 0.1, color: "var(--color-ink)", duration: 7 }, "rememberTransition")
+      .to(surprise, { autoAlpha: 0, duration: 3 }, "rememberTransition")
+      .to(wash, { scaleY: 0, duration: 4 }, "rememberTransition+=3")
+      .to(remember, { autoAlpha: 1, scale: 1.12, x: -4, duration: 4 }, "rememberTransition+=3")
+      .to([title, story, react], { autoAlpha: 0.1, duration: 7 }, "rememberTransition")
       .addLabel("rememberHold", 77)
       .to(remember, { autoAlpha: 1, scale: 1.12, x: -4, duration: 10 }, "rememberHold")
       .addLabel("thesis", 87)
