@@ -1,16 +1,11 @@
-import { MOTION_EASE } from "@/components/motion/motion.config";
+import {
+  MOTION_EASE,
+  type MotionConditions,
+} from "@/components/motion/motion.config";
 import { gsap } from "@/components/motion/motion.client";
 
-export type HeroMotionConditions = {
-  desktop: boolean;
-  tablet: boolean;
-  mobile: boolean;
-  reduceMotion: boolean;
-};
-
-export function createHeroScene(root: HTMLElement, conditions: HeroMotionConditions) {
+export function createHeroScene(root: HTMLElement, conditions: MotionConditions) {
   const select = gsap.utils.selector(root);
-  const header = select<HTMLElement>(".site-header")[0];
   const headerLogo = select<HTMLElement>("[data-motion='header-logo']")[0];
   const headerNav = select<HTMLElement>("[data-motion='header-nav']")[0];
   const hero = select<HTMLElement>(".hero")[0];
@@ -22,7 +17,6 @@ export function createHeroScene(root: HTMLElement, conditions: HeroMotionConditi
   const heroCta = select<HTMLElement>("[data-motion='hero-cta']")[0];
 
   if (
-    !header ||
     !headerLogo ||
     !headerNav ||
     !hero ||
@@ -90,10 +84,10 @@ export function createHeroScene(root: HTMLElement, conditions: HeroMotionConditi
     .from(heroCta, { autoAlpha: 0, y: Math.max(10, supportTravel - 4), duration: 0.62 }, 0.82);
 
   const exitValues = conditions.mobile
-    ? { titleY: -5.5, titleOpacity: 0.36, titleScale: 1, supportY: -24, headerY: -20, scrub: 0.45 }
+    ? { titleY: -5.5, titleOpacity: 0.36, titleScale: 1, supportY: -24, scrub: 0.45 }
     : isTablet
-      ? { titleY: -8, titleOpacity: 0.28, titleScale: 0.988, supportY: -34, headerY: -24, scrub: 0.55 }
-      : { titleY: -11, titleOpacity: 0.22, titleScale: 0.98, supportY: -42, headerY: -28, scrub: 0.65 };
+      ? { titleY: -8, titleOpacity: 0.28, titleScale: 0.988, supportY: -34, scrub: 0.55 }
+      : { titleY: -11, titleOpacity: 0.22, titleScale: 0.98, supportY: -42, scrub: 0.65 };
 
   const exit = gsap.timeline({
     defaults: { ease: MOTION_EASE.scroll },
@@ -118,8 +112,7 @@ export function createHeroScene(root: HTMLElement, conditions: HeroMotionConditi
       },
       0,
     )
-    .to(heroSupport, { autoAlpha: 0, y: exitValues.supportY, duration: 0.74 }, 0)
-    .to(header, { autoAlpha: 0, y: exitValues.headerY, duration: 0.7 }, 0);
+    .to(heroSupport, { autoAlpha: 0, y: exitValues.supportY, duration: 0.74 }, 0);
 
   return () => {
     exit.scrollTrigger?.kill();
