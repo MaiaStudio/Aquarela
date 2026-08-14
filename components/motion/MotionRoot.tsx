@@ -11,6 +11,8 @@ import {
 import { gsap, ScrollTrigger, useGSAP } from "@/components/motion/motion.client";
 import { createAuthorityScene } from "@/components/motion/scenes/authority";
 import { createHeroScene } from "@/components/motion/scenes/hero";
+import { createPositioningScene } from "@/components/motion/scenes/positioning";
+import { createProcessScene } from "@/components/motion/scenes/process";
 import { createRedesignScene } from "@/components/motion/scenes/redesign";
 
 type MotionRootProps = {
@@ -49,8 +51,12 @@ export function MotionRoot({ children }: MotionRootProps) {
         const disposeHero = createHeroScene(root, conditions);
         const disposeAuthority = createAuthorityScene(root, conditions);
         const disposeRedesign = createRedesignScene(root, conditions);
+        const disposePositioning = createPositioningScene(root, conditions);
+        const disposeProcess = createProcessScene(root, conditions);
 
         return () => {
+          disposeProcess?.();
+          disposePositioning?.();
           disposeRedesign?.();
           disposeAuthority?.();
           disposeHero?.();

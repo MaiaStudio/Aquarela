@@ -10,15 +10,23 @@ const processSteps = [
 
 export function ProcessSection() {
   return (
-    <section className="process" id="process" aria-labelledby="process-title">
+    <section
+      className="process"
+      id="process"
+      aria-labelledby="process-title"
+      data-motion="process-section"
+    >
       <Container>
-        <h2 className="process-heading" id="process-title">Process</h2>
-        <ol className="process-list">
+        <h2 className="process-heading" id="process-title" data-motion="process-heading">
+          Process
+        </h2>
+        <ol className="process-list" data-motion="process-list">
           {processSteps.map((step) => (
             <li className="process-row" key={step.number} data-motion="process-row">
-              <span className="process-number">{step.number}</span>
-              <h3>{step.title}</h3>
-              <p>{step.detail}</p>
+              <span className="process-rule" data-motion="process-rule" aria-hidden="true" />
+              <span className="process-number" data-motion="process-number">{step.number}</span>
+              <h3 data-motion="process-title">{step.title}</h3>
+              <p data-motion="process-detail">{step.detail}</p>
             </li>
           ))}
         </ol>
