@@ -1,5 +1,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { MotionRoot } from "@/components/motion/MotionRoot";
 import { AuthoritySection } from "@/components/sections/AuthoritySection";
 import { ClosingSection } from "@/components/sections/ClosingSection";
 import { HeroSection } from "@/components/sections/HeroSection";
@@ -10,7 +11,7 @@ import { RedesignSection } from "@/components/sections/RedesignSection";
 
 export default function Home() {
   return (
-    <>
+    <MotionRoot>
       <Header />
       <main id="main-content">
         <HeroSection />
@@ -22,6 +23,6 @@ export default function Home() {
         <ClosingSection />
       </main>
       <Footer />
-    </>
+    </MotionRoot>
   );
 }
