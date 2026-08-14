@@ -47,47 +47,152 @@ export function createAuthorityScene(root: HTMLElement, conditions: MotionCondit
   if (conditions.reduceMotion) return;
 
   if (conditions.mobile) {
+    section.classList.add("authority--mobile-motion");
+
     const intro = gsap.timeline({
       defaults: { ease: MOTION_EASE.ui },
       scrollTrigger: {
-        id: "motion-02-authority-mobile-intro",
+        id: "motion-02b-authority-intro",
         trigger: section,
-        start: "top 80%",
+        start: "top 82%",
         once: true,
       },
     });
 
-    intro.from([title, story, react, surprise, remember], {
-      autoAlpha: 0,
-      y: 20,
-      duration: 0.76,
-      stagger: 0.075,
+    const storyBeat = gsap.timeline({
+      defaults: { ease: MOTION_EASE.scroll },
+      scrollTrigger: {
+        id: "motion-02b-authority-story",
+        trigger: story,
+        start: "top 82%",
+        end: "bottom 38%",
+        scrub: 0.35,
+      },
+    });
+
+    const reactBeat = gsap.timeline({
+      defaults: { ease: MOTION_EASE.scroll },
+      scrollTrigger: {
+        id: "motion-02b-authority-react",
+        trigger: react,
+        start: "top 78%",
+        end: "bottom 62%",
+        scrub: 0.32,
+      },
+    });
+
+    const surpriseBeat = gsap.timeline({
+      defaults: { ease: MOTION_EASE.scroll },
+      scrollTrigger: {
+        id: "motion-02b-authority-surprise",
+        trigger: surprise,
+        start: "top 62%",
+        end: "bottom 32%",
+        scrub: 0.32,
+      },
+    });
+
+    const rememberBeat = gsap.timeline({
+      defaults: { ease: MOTION_EASE.scroll },
+      scrollTrigger: {
+        id: "motion-02b-authority-remember",
+        trigger: remember,
+        start: "top 78%",
+        end: "bottom 42%",
+        scrub: 0.35,
+      },
     });
 
     const thesis = gsap.timeline({
-      defaults: { ease: MOTION_EASE.reveal },
+      defaults: { ease: MOTION_EASE.scroll },
       scrollTrigger: {
-        id: "motion-02-authority-mobile-thesis",
+        id: "motion-02b-authority-thesis",
         trigger: conclusion,
         start: "top 84%",
-        once: true,
+        end: "top 54%",
+        scrub: 0.35,
       },
     });
 
-    thesis.from(conclusionLines, {
-      yPercent: 110,
-      duration: 0.82,
-      stagger: 0.12,
-    });
+    gsap.set(title, { autoAlpha: 0, y: 24 });
+    gsap.set([story, react, surprise, remember], { transformOrigin: "0% 50%" });
+    gsap.set(story, { autoAlpha: 0, y: 24, scale: 1, x: 0 });
+    gsap.set(react, { autoAlpha: 0.18, scale: 1, x: 0 });
+    gsap.set(surprise, { autoAlpha: 0.12, scale: 1, x: 0 });
+    gsap.set(remember, { autoAlpha: 0.18, scale: 1, x: 0 });
+    gsap.set(wash, { scaleY: 0, transformOrigin: "50% 100%" });
+    gsap.set(conclusionLines, { yPercent: 110 });
+
+    intro.fromTo(title, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.72 });
+
+    storyBeat
+      .fromTo(
+        story,
+        { autoAlpha: 0, y: 24, scale: 1, x: 0 },
+        { autoAlpha: 1, y: 0, scale: 1, x: 0, duration: 0.34, ease: MOTION_EASE.ui },
+      )
+      .to(story, { autoAlpha: 1, scale: 1.08, x: -6, duration: 0.36 })
+      .to(story, { autoAlpha: 0.56, scale: 1, x: 0, duration: 0.42 });
+
+    reactBeat
+      .fromTo(
+        react,
+        { autoAlpha: 0.18, scale: 1, x: 0 },
+        { autoAlpha: 1, scale: 1.2, x: 14, duration: 0.56 },
+      )
+      .to(react, { autoAlpha: 0.66, scale: 1.08, x: 5, duration: 0.44 });
+
+    surpriseBeat
+      .set(wash, { transformOrigin: "50% 100%" })
+      .to(wash, { scaleY: 1, duration: 0.32 })
+      .to(
+        surprise,
+        { autoAlpha: 1, color: "var(--color-paper)", scale: 1.3, x: -12, duration: 0.36 },
+        "<",
+      )
+      .to([title, story, react, remember], { autoAlpha: 0.12, color: "var(--color-paper)", duration: 0.28 }, "<")
+      .to(wash, { scaleY: 1, duration: 0.26 })
+      .set(wash, { transformOrigin: "50% 0%" })
+      .to(wash, { scaleY: 0, duration: 0.32 })
+      .to(
+        surprise,
+        { autoAlpha: 0.12, color: "var(--color-ink)", scale: 1, x: 0, duration: 0.32 },
+        "<",
+      )
+      .to([title, story, react, remember], { color: "var(--color-ink)", duration: 0.24 }, "<");
+
+    rememberBeat
+      .fromTo(
+        remember,
+        { autoAlpha: 0.38, scale: 1, x: 0 },
+        { autoAlpha: 1, scale: 1.13, x: -4, duration: 0.55 },
+      )
+      .to(remember, { autoAlpha: 1, scale: 1.08, x: 0, duration: 0.45 })
+      .to(surprise, { autoAlpha: 0.08, duration: 0.35 }, 0.3);
+
+    thesis.fromTo(
+      conclusionLines,
+      { yPercent: 110 },
+      { yPercent: 0, duration: 0.84, stagger: 0.13, ease: MOTION_EASE.reveal },
+    );
 
     return () => {
       thesis.scrollTrigger?.kill();
+      rememberBeat.scrollTrigger?.kill();
+      surpriseBeat.scrollTrigger?.kill();
+      reactBeat.scrollTrigger?.kill();
+      storyBeat.scrollTrigger?.kill();
       intro.scrollTrigger?.kill();
       thesis.revert();
+      rememberBeat.revert();
+      surpriseBeat.revert();
+      reactBeat.revert();
+      storyBeat.revert();
       intro.revert();
-      gsap.set([title, story, react, surprise, remember, ...conclusionLines], {
-        clearProps: "opacity,transform,visibility",
+      gsap.set([title, story, react, surprise, remember, ...conclusionLines, wash], {
+        clearProps: CLEAR_PROPS,
       });
+      section.classList.remove("authority--mobile-motion");
     };
   }
 
