@@ -168,7 +168,9 @@ button, a, input, textarea { outline: none; }
   letter-spacing: var(--tracking-display);
   line-height: var(--leading-display);
 }
-.hero-title > span { display: block; white-space: nowrap; }
+.hero-line-mask { display: block; overflow: hidden; }
+.hero-line { display: block; white-space: nowrap; }
+.hero-dot { display: inline-block; }
 .hero-dot, .closing-dot { color: var(--color-olive); }
 .hero-support {
   display: grid;
@@ -527,7 +529,7 @@ button, a, input, textarea { outline: none; }
 
   .hero-inner { grid-template-columns: repeat(4, minmax(0, 1fr)); align-content: center; padding-top: 8rem; padding-bottom: var(--space-12); }
   .hero-title { grid-column: 1 / -1; font-size: clamp(3.55rem, 15.4vw, 4.8rem); letter-spacing: -0.065em; line-height: 0.88; }
-  .hero-title > span { white-space: normal; }
+  .hero-line { white-space: normal; }
   .hero-support { display: flex; grid-column: 1 / -1; align-items: flex-start; flex-direction: column; gap: var(--space-6); margin-top: clamp(3rem, 9vh, 5rem); }
   .hero-support p { max-width: 22rem; }
   .text-cta { min-height: 42px; }
