@@ -324,7 +324,15 @@ button, a, input, textarea { outline: none; }
     align-items: flex-start;
     gap: clamp(0.35rem, 1.4svh, 0.9rem);
     margin: 0;
-    transform: translateY(-50%);
+    transform: translate3d(0, -50%, 0);
+  }
+  .authority--mobile-motion .authority-title,
+  .authority--mobile-motion .authority-phrases,
+  .authority--mobile-motion .authority-phrases p,
+  .authority--mobile-motion .authority-wash,
+  .authority--mobile-motion .authority-conclusion,
+  .authority--mobile-motion .authority-conclusion-line {
+    transition: none;
   }
   .authority--mobile-motion .authority-phrases p {
     width: fit-content;
