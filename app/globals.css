@@ -280,14 +280,16 @@ button, a, input, textarea { outline: none; }
 }
 
 @media (max-width: 767px) {
-  /* AUTHORITY — MOTION 02B */
-  .authority--mobile-motion {
-    padding-block: clamp(5rem, 12vh, 8rem) clamp(7rem, 16vh, 11rem);
+  /* AUTHORITY — MOTION 02C */
+  .authority.authority--mobile-motion {
+    min-height: 380svh;
+    padding-block: 0;
   }
   .authority--mobile-motion .authority-stage {
-    position: relative;
-    min-height: 150svh;
-    overflow: hidden;
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 100svh;
     overflow: clip;
     isolation: isolate;
   }
@@ -303,20 +305,38 @@ button, a, input, textarea { outline: none; }
     position: relative;
     z-index: 1;
     display: block;
+    height: 100%;
     min-height: 100%;
-    padding-block: clamp(1rem, 4vh, 2.5rem);
+    padding-block: clamp(1.5rem, 6svh, 4rem);
+  }
+  .authority--mobile-motion .authority-title {
+    position: absolute;
+    top: clamp(1.75rem, 9svh, 5.5rem);
+    right: var(--gutter);
+    left: var(--gutter);
+    margin: 0;
   }
   .authority--mobile-motion .authority-phrases {
+    position: absolute;
+    top: 50%;
+    right: var(--gutter);
+    left: var(--gutter);
     align-items: flex-start;
-    gap: clamp(3.5rem, 14vh, 7rem);
-    margin-top: clamp(3rem, 8vh, 5rem);
+    gap: clamp(0.35rem, 1.4svh, 0.9rem);
+    margin: 0;
+    transform: translateY(-50%);
   }
   .authority--mobile-motion .authority-phrases p {
     width: fit-content;
     max-width: 100%;
   }
   .authority--mobile-motion .authority-conclusion {
-    margin-top: clamp(7rem, 18vh, 12rem);
+    position: absolute;
+    top: 50%;
+    right: var(--gutter);
+    left: var(--gutter);
+    margin: 0;
+    transform: translateY(-50%);
   }
 }
 
