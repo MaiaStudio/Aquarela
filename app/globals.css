@@ -91,18 +91,19 @@ button, a, input, textarea { outline: none; }
 .cursor-dot-position { width: 6px; aspect-ratio: 1; }
 .cursor-follower-visual, .cursor-dot-visual { display: block; width: 100%; height: 100%; border-radius: 50%; }
 .cursor-follower-visual {
-  border: 1px solid var(--color-white);
-  mix-blend-mode: difference;
+  border: 1px solid var(--color-olive);
   transition: transform 200ms cubic-bezier(0.2, 0, 0, 1), border-color 160ms ease;
 }
 .cursor-dot-visual {
   background: var(--color-olive);
-  transition: transform 180ms cubic-bezier(0.2, 0, 0, 1), background-color 160ms ease, mix-blend-mode 160ms ease;
+  transition: transform 180ms cubic-bezier(0.2, 0, 0, 1), background-color 160ms ease;
 }
 .custom-cursor.is-interactive .cursor-follower-visual { transform: scale(1.6); }
 .custom-cursor.is-interactive .cursor-dot-visual { transform: scale(0.78); }
+.custom-cursor.is-dark .cursor-follower-visual { border-color: var(--color-paper); }
 .custom-cursor.is-dark .cursor-dot-visual { background: var(--color-paper); }
-.custom-cursor.is-adaptive .cursor-dot-visual { mix-blend-mode: difference; }
+.custom-cursor.is-adaptive .cursor-follower-visual { border-color: var(--color-yellow); }
+.custom-cursor.is-adaptive .cursor-dot-visual { background: var(--color-yellow); }
 .custom-cursor.is-text-input .cursor-follower-position,
 .custom-cursor.is-text-input .cursor-dot-position { visibility: hidden; }
 
@@ -241,27 +242,6 @@ button, a, input, textarea { outline: none; }
 
 /* AUTHORITY */
 .authority { position: relative; padding-block: var(--section-space-md) var(--section-space-lg); }
-.hero-authority-transition { display: none; }
-.authority--reveal-transition .hero-authority-transition {
-  position: absolute;
-  z-index: 4;
-  top: 0;
-  left: 0;
-  display: grid;
-  width: 100%;
-  height: 100svh;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  overflow: hidden;
-  pointer-events: none;
-}
-.authority--reveal-transition .hero-authority-transition span {
-  display: block;
-  height: 100%;
-  background: var(--color-paper);
-}
-.authority--reveal-transition .hero-authority-transition span:not(:last-child) {
-  border-right: 1px solid color-mix(in srgb, var(--color-ink) 8%, transparent);
-}
 .authority-wash { display: none; }
 .authority-inner {
   display: grid;

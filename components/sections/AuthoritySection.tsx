@@ -8,11 +8,6 @@ export function AuthoritySection() {
       data-motion="authority-section"
       data-cursor-theme="adaptive"
     >
-      <div className="hero-authority-transition" data-motion="hero-authority-transition" aria-hidden="true">
-        {Array.from({ length: 5 }, (_, index) => (
-          <span data-motion="hero-authority-panel" key={index} />
-        ))}
-      </div>
       <div className="authority-stage" data-motion="authority-stage">
         <div className="authority-wash" data-motion="authority-wash" aria-hidden="true" />
         <Container className="authority-inner">
