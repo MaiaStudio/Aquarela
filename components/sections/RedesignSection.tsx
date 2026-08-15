@@ -8,6 +8,7 @@ export function RedesignSection() {
       id="work"
       aria-labelledby="redesign-title"
       data-motion="redesign-section"
+      data-cursor-theme="dark"
     >
       <Container>
         <div className="redesign-heading" data-motion="redesign-heading">

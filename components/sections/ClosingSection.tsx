@@ -7,6 +7,7 @@ export function ClosingSection() {
       className="closing"
       aria-labelledby="closing-title"
       data-motion="closing-section"
+      data-cursor-theme="dark"
     >
       <Container className="closing-inner" data-motion="closing-inner">
         <p data-motion="closing-intro">Your website speaks before you do.</p>
