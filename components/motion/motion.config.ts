@@ -1,7 +1,7 @@
 export const MOTION_QUERIES = {
   desktop: "(min-width: 1024px)",
-  tablet: "(min-width: 768px) and (max-width: 1023px)",
-  mobile: "(max-width: 767px)",
+  tablet: "(min-width: 768px) and (max-width: 1023.98px)",
+  mobile: "(max-width: 767.98px)",
   reduceMotion: "(prefers-reduced-motion: reduce)",
 } as const;
 

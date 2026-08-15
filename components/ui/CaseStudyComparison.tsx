@@ -3,7 +3,7 @@ import Image from "next/image";
 import afterImage from "@/Assets/case-studies/fotomaton-party/after.jpg";
 import beforeImage from "@/Assets/case-studies/fotomaton-party/before.jpg";
 
-const imageSizes = "(max-width: 767px) calc(100vw - 2 * 1.25rem), (max-width: 1439px) 90vw, 1400px";
+const imageSizes = "(max-width: 767.98px) calc(100vw - 2 * 1.25rem), (max-width: 1439px) 90vw, 1400px";
 
 export function CaseStudyComparison() {
   return (

@@ -118,7 +118,7 @@ export function ProjectFormSection() {
         return;
       }
 
-      const mobile = window.matchMedia("(max-width: 767px)").matches;
+      const mobile = window.matchMedia("(max-width: 767.98px)").matches;
       const direction = directionRef.current;
       const incomingX = (mobile ? 14 : 20) * direction;
       const legend = panel.querySelector<HTMLElement>("legend");
@@ -274,7 +274,7 @@ export function ProjectFormSection() {
         return;
       }
 
-      const mobile = window.matchMedia("(max-width: 767px)").matches;
+      const mobile = window.matchMedia("(max-width: 767.98px)").matches;
       const outgoingX = (mobile ? 12 : 18) * -direction;
 
       activeAnimationRef.current?.kill();
