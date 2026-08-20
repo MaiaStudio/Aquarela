@@ -127,63 +127,97 @@ export function createHeroAuthoritySequenceScene(
     phrase4YOffset: 0,
   };
 
+  const phraseWidths: number[] = [0, 0, 0, 0, 0];
+
+  function measurePhraseWidths() {
+    phrases.forEach((phrase, i) => {
+      const rect = phrase.getBoundingClientRect();
+      phraseWidths[i] = rect.width || phrase.offsetWidth || 0;
+    });
+  }
+
+  const EXIT_ANGLE = 105;
+
   function applyOrbitTransform(
     el: HTMLElement,
     theta: number,
     vw: number,
     vh: number,
-    isPhrase4 = false
+    index: number
   ) {
-    const thetaRad = (theta * Math.PI) / 180;
-    const orbitRadiusX = vw * cfg.radiusXRatio;
-    const orbitRadiusZ = cfg.radiusZ;
-
-    // X position along ellipse
-    const x = Math.sin(thetaRad) * orbitRadiusX;
-
-    // True Z depth
-    const z = Math.cos(thetaRad) * orbitRadiusZ - orbitRadiusZ;
-
-    // Rotate Y (strong perspective foreshortening)
-    const rotY = -theta * cfg.rotationMultiplier;
-
-    // Asymmetric vertical path:
-    // theta > 0 (incoming right) comes from below (+entryY)
-    // theta < 0 (outgoing left) rises slightly (-exitY)
+    const isPhrase4 = index === 4;
+    let x = 0;
     let y = 0;
-    if (theta > 0) {
+    let z = 0;
+    let rotY = 0;
+    let rotZ = 0;
+    let opacity = 0;
+
+    if (theta >= 0) {
+      // ---------------------------------------------------------------------
+      // INCOMING TRAJECTORY (LOWER-RIGHT -> CENTER) - PRESERVED EXACTLY
+      // ---------------------------------------------------------------------
+      const thetaRad = (theta * Math.PI) / 180;
+      const orbitRadiusX = vw * cfg.radiusXRatio;
+      const orbitRadiusZ = cfg.radiusZ;
+
+      x = Math.sin(thetaRad) * orbitRadiusX;
+      z = Math.cos(thetaRad) * orbitRadiusZ - orbitRadiusZ;
+      rotY = -theta * cfg.rotationMultiplier;
+      rotZ = theta * 0.055;
+
       const norm = Math.max(0, Math.min(1, theta / cfg.visibleAngle));
       y = Math.pow(norm, 1.30) * vh * cfg.entryYRatio;
-    } else if (theta < 0) {
-      const norm = Math.max(0, Math.min(1, Math.abs(theta) / cfg.visibleAngle));
-      y = -Math.pow(norm, 1.20) * vh * cfg.exitYRatio;
+
+      const absTheta = Math.abs(theta);
+      if (absTheta <= 70) {
+        opacity = 1;
+      } else if (absTheta <= cfg.visibleAngle) {
+        opacity = (cfg.visibleAngle - absTheta) / (cfg.visibleAngle - 70);
+      } else {
+        opacity = 0;
+      }
+    } else {
+      // ---------------------------------------------------------------------
+      // OUTGOING TRAJECTORY (CENTER -> MONOTONIC LEFT -> FULL VIEWPORT EXIT)
+      // ---------------------------------------------------------------------
+      const exitNorm = Math.max(0, Math.min(1, Math.abs(theta) / EXIT_ANGLE));
+      const phraseWidth = phraseWidths[index] || el.offsetWidth || 400;
+      const exitMargin = Math.min(96, Math.max(48, vw * 0.05));
+      const exitDistance = (vw * 0.5) + (phraseWidth * 0.5) + exitMargin;
+
+      // 1. Monotonic X: Dynamically scales to physically clear entire phrase width beyond left edge
+      x = -exitDistance * Math.pow(exitNorm, 0.88);
+
+      // 2. Monotonic, shallower Z: Primary movement is LEFT, not backward
+      z = -cfg.radiusZ * 0.58 * Math.pow(exitNorm, 1.15);
+
+      // 3. Progressive RotateY: Perspective compression up to 68deg
+      rotY = exitNorm * 68;
+
+      // 4. Subtle Roll
+      rotZ = theta * 0.04;
+
+      // 5. Almost flat Y (max -1.5vh rise)
+      y = -Math.pow(exitNorm, 1.20) * vh * 0.015;
+
+      // 6. Opacity: Full until exitNorm 0.92, then fades smoothly at extreme edge (fully offscreen)
+      if (exitNorm < 0.92) {
+        opacity = 1;
+      } else if (exitNorm < 1.0) {
+        opacity = (1 - exitNorm) / (1 - 0.92);
+      } else {
+        opacity = 0;
+      }
     }
 
     if (isPhrase4) {
       y += orbitState.phrase4YOffset;
-    }
-
-    // Small Roll (rotateZ)
-    const rotZ = theta * 0.055;
-
-    // Opacity window (clean falloff only beyond 70deg)
-    const absTheta = Math.abs(theta);
-    let opacity = 0;
-    if (absTheta <= 70) {
-      opacity = 1;
-    } else if (absTheta <= cfg.visibleAngle) {
-      opacity = (cfg.visibleAngle - absTheta) / (cfg.visibleAngle - 70);
-    } else {
-      opacity = 0;
-    }
-
-    if (isPhrase4) {
       opacity *= orbitState.phrase4Fade;
     }
 
     el.style.transform = `translate3d(calc(-50% + ${x.toFixed(2)}px), calc(-50% + ${y.toFixed(2)}px), ${z.toFixed(2)}px) rotateY(${rotY.toFixed(2)}deg) rotateZ(${rotZ.toFixed(2)}deg)`;
     el.style.opacity = opacity.toFixed(3);
-    el.style.visibility = opacity > 0.001 ? "visible" : "hidden";
   }
 
   function renderOrbit() {
@@ -194,7 +228,7 @@ export function createHeroAuthoritySequenceScene(
     for (let i = 0; i < 5; i++) {
       const baseAngle = BASE_ANGLES[i];
       const localTheta = baseAngle - currentAngle;
-      applyOrbitTransform(phrases[i], localTheta, vw, vh, i === 4);
+      applyOrbitTransform(phrases[i], localTheta, vw, vh, i);
     }
   }
 
@@ -205,8 +239,14 @@ export function createHeroAuthoritySequenceScene(
     gsap.set(paperLayer, { autoAlpha: 0 });
   }
 
-  // Render initial frame of pre-portal Authority 3D scene
+  // Measure phrase dimensions and render initial frame of pre-portal Authority 3D scene
+  measurePhraseWidths();
   renderOrbit();
+
+  void document.fonts.ready.then(() => {
+    measurePhraseWidths();
+    renderOrbit();
+  });
 
   // Child Authority Timeline (Completely deterministic, owns all Authority transforms)
   const authorityTimeline = gsap.timeline({
@@ -328,6 +368,8 @@ export function createHeroAuthoritySequenceScene(
     const w = stageRect.width || window.innerWidth;
     const h = stageRect.height || window.innerHeight;
 
+    measurePhraseWidths();
+
     // Total scroll budget: 0.8vh (portal) + 5.1vh (Authority) = 5.9vh
     const totalScrollVH = conditions.mobile ? 5.2 : 5.9;
     const scrollDistancePx = totalScrollVH * h;
@@ -447,7 +489,6 @@ export function createHeroAuthoritySequenceScene(
     phrases.forEach((phrase) => {
       phrase.style.transform = "";
       phrase.style.opacity = "";
-      phrase.style.visibility = "";
     });
     if (bubble) {
       bubble.style.transform = "";
