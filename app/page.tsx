@@ -1,9 +1,8 @@
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MotionRoot } from "@/components/motion/MotionRoot";
-import { AuthoritySection } from "@/components/sections/AuthoritySection";
+import { HeroAuthoritySection } from "@/components/sections/HeroAuthoritySection";
 import { ClosingSection } from "@/components/sections/ClosingSection";
-import { HeroSection } from "@/components/sections/HeroSection";
 import { PositioningSection } from "@/components/sections/PositioningSection";
 import { ProcessSection } from "@/components/sections/ProcessSection";
 import { ProjectFormSection } from "@/components/sections/ProjectFormSection";
@@ -14,8 +13,7 @@ export default function Home() {
     <MotionRoot>
       <Header />
       <main id="main-content">
-        <HeroSection />
-        <AuthoritySection />
+        <HeroAuthoritySection />
         <RedesignSection />
         <PositioningSection />
         <ProcessSection />

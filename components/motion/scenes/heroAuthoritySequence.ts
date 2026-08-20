@@ -17,6 +17,7 @@ type OrbitConfig = {
   bubbleZ: number;
 };
 
+// EXACT PRE-PORTAL WORKING ORBIT CONFIGURATION
 const ORBIT_CONFIG = {
   desktop: {
     perspective: 680,
@@ -58,23 +59,41 @@ const ORBIT_CONFIG = {
 
 const BASE_ANGLES = [0, 88, 176, 264, 352] as const;
 
-export function createAuthorityScene(root: HTMLElement, conditions: MotionConditions) {
-  const select = gsap.utils.selector(root);
-  const section = select<HTMLElement>("[data-motion='authority-section']")[0];
-  const stage = select<HTMLElement>("[data-motion='authority-stage']")[0];
-  const phrases = select<HTMLElement>("[data-motion='authority-phrase']");
-  const bubble = select<HTMLElement>("[data-motion='authority-bubble']")[0];
-  const stardust = select<HTMLElement>("[data-motion='authority-stardust']")[0];
-  const paperLayer = select<HTMLElement>("[data-motion='authority-paper']")[0];
-  const conclusionStage = select<HTMLElement>("[data-motion='authority-conclusion']")[0];
-  const conclusionLines = select<HTMLElement>("[data-motion='authority-conclusion-line']");
+export function createHeroAuthoritySequenceScene(
+  root: HTMLElement,
+  conditions: MotionConditions
+) {
+  const experience = root.querySelector<HTMLElement>("[data-motion='hero-authority-experience']");
+  const runway = root.querySelector<HTMLElement>("[data-motion='hero-authority-runway']");
+  const stage = root.querySelector<HTMLElement>("[data-motion='hero-authority-stage']");
+  const heroForeground = root.querySelector<HTMLElement>("[data-motion='hero-foreground-stage']");
+  const aAnchor = root.querySelector<HTMLElement>("[data-hero-a-counter-anchor]");
 
-  if (!section || !stage || phrases.length !== 5 || !conclusionStage || conclusionLines.length !== 2) {
+  // Real Authority Elements
+  const phrases = root.querySelectorAll<HTMLElement>("[data-motion='authority-phrase']");
+  const bubble = root.querySelector<HTMLElement>("[data-motion='authority-bubble']");
+  const stardust = root.querySelector<HTMLElement>("[data-motion='authority-stardust']");
+  const paperLayer = root.querySelector<HTMLElement>("[data-motion='authority-paper']");
+  const conclusionStage = root.querySelector<HTMLElement>("[data-motion='authority-conclusion']");
+  const conclusionLines = root.querySelectorAll<HTMLElement>("[data-motion='authority-conclusion-line']");
+
+  if (
+    !experience ||
+    !runway ||
+    !stage ||
+    !heroForeground ||
+    phrases.length !== 5 ||
+    !conclusionStage ||
+    conclusionLines.length !== 2
+  ) {
     return;
   }
 
-  // Reduced motion fallback: show clean readable flow without long pin
+  // Reduced motion: standard linear flow
   if (conditions.reduceMotion) {
+    runway.style.height = "auto";
+    stage.style.position = "relative";
+    heroForeground.style.position = "relative";
     phrases.forEach((phrase) => {
       phrase.style.position = "relative";
       phrase.style.top = "auto";
@@ -84,11 +103,9 @@ export function createAuthorityScene(root: HTMLElement, conditions: MotionCondit
       phrase.style.visibility = "visible";
       phrase.style.marginBottom = "2rem";
     });
-    if (conclusionStage) {
-      conclusionStage.style.position = "relative";
-      conclusionStage.style.opacity = "1";
-      conclusionStage.style.visibility = "visible";
-    }
+    conclusionStage.style.position = "relative";
+    conclusionStage.style.opacity = "1";
+    conclusionStage.style.visibility = "visible";
     conclusionLines.forEach((line) => {
       line.style.transform = "none";
     });
@@ -101,7 +118,9 @@ export function createAuthorityScene(root: HTMLElement, conditions: MotionCondit
     ? ORBIT_CONFIG.tablet
     : ORBIT_CONFIG.desktop;
 
-  // Single global carousel orbit angle
+  // =========================================================================
+  // 1. PRE-PORTAL WORKING AUTHORITY 3D ENGINE (PAUSED CHILD TIMELINE)
+  // =========================================================================
   const orbitState = {
     angle: 0,
     phrase4Fade: 1,
@@ -179,58 +198,24 @@ export function createAuthorityScene(root: HTMLElement, conditions: MotionCondit
     }
   }
 
-  // Initial States
+  // Initial States for Authority elements
   gsap.set(conclusionStage, { autoAlpha: 0 });
   gsap.set(conclusionLines, { yPercent: 110 });
   if (paperLayer) {
     gsap.set(paperLayer, { autoAlpha: 0 });
   }
 
-  // Initial render of 3D carousel at angle = 0
+  // Render initial frame of pre-portal Authority 3D scene
   renderOrbit();
 
-  // Scroll budget: 4.2vh (carousel) + 0.9vh (conclusion) = 5.1vh
-  const scrollRunway = conditions.mobile ? 4.4 : 5.1;
-
-  // Master timeline animating orbitState.angle, handoff, and original conclusion reveal
-  const timeline = gsap.timeline({
+  // Child Authority Timeline (Completely deterministic, owns all Authority transforms)
+  const authorityTimeline = gsap.timeline({
+    paused: true,
     defaults: { ease: "none" },
     onUpdate: renderOrbit,
-    scrollTrigger: {
-      id: "motion-02-authority-3d",
-      trigger: stage,
-      start: "top top",
-      end: () => `+=${window.innerHeight * scrollRunway}`,
-      pin: true,
-      scrub: 0.55,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-    },
   });
 
-  /*
-    TIMELINE ARCHITECTURE:
-
-    PART A — 3D CAROUSEL ORBIT
-    0.00–1.00:  Phrase 0 ("MORE THAN A WEBSITE.") HOLD (angle = 0)
-    1.00–2.40:  ROTATE 1 (0 -> 88)
-    2.40–3.20:  Phrase 1 ("IT CAN TELL A STORY.") HOLD (angle = 88)
-    3.20–4.60:  ROTATE 2 (88 -> 176)
-    4.60–5.40:  Phrase 2 ("REACT.") HOLD (angle = 176)
-    5.40–6.80:  ROTATE 3 (176 -> 264)
-    6.80–7.60:  Phrase 3 ("SURPRISE.") HOLD (angle = 264)
-    7.60–9.00:  ROTATE 4 (264 -> 352)
-    9.00–10.00: Phrase 4 ("BE REMEMBERED.") FULL FRONTAL HOLD (angle = 352)
-
-    PART B — CONCLUSION HANDOFF & BLACK -> PAPER TRANSITION
-    10.00–11.00: Phrase 4 fades/recedes, Bubble Burst exits, Stardust fades, Paper layer reveals
-
-    PART C — ORIGINAL THESIS REVEAL & HOLD
-    11.00–12.20: Original conclusion lines reveal from below
-    12.20–13.80: Final Thesis HOLD on pure Paper before release into WORK
-  */
-
-  timeline
+  authorityTimeline
     // ----------------------------------------------------
     // PART A: 3D CYLINDRICAL CAROUSEL
     // ----------------------------------------------------
@@ -329,9 +314,136 @@ export function createAuthorityScene(root: HTMLElement, conditions: MotionCondit
       "thesis-hold",
     );
 
+  // =========================================================================
+  // 2. HERO PORTAL GEOMETRY & APERTURE MASK (AFFECTS HERO ONLY)
+  // =========================================================================
+  let portalOriginX = 0;
+  let portalOriginY = 0;
+  let halfCoverageRadius = 0;
+  let maxRadius = 0;
+
+  function computePortalGeometry() {
+    if (!stage || !runway) return;
+    const stageRect = stage.getBoundingClientRect();
+    const w = stageRect.width || window.innerWidth;
+    const h = stageRect.height || window.innerHeight;
+
+    // Total scroll budget: 0.8vh (portal) + 5.1vh (Authority) = 5.9vh
+    const totalScrollVH = conditions.mobile ? 5.2 : 5.9;
+    const scrollDistancePx = totalScrollVH * h;
+    runway.style.height = `calc(100svh + ${scrollDistancePx.toFixed(0)}px)`;
+
+    if (aAnchor) {
+      const aRect = aAnchor.getBoundingClientRect();
+      portalOriginX = aRect.left - stageRect.left + aRect.width * 0.5;
+      portalOriginY = aRect.top - stageRect.top + aRect.height * 0.5;
+    } else {
+      portalOriginX = w * 0.5;
+      portalOriginY = h * 0.575;
+    }
+
+    halfCoverageRadius = Math.sqrt((w * h * 0.5) / Math.PI) * 1.05;
+    const d1 = Math.hypot(portalOriginX, portalOriginY);
+    const d2 = Math.hypot(w - portalOriginX, portalOriginY);
+    const d3 = Math.hypot(portalOriginX, h - portalOriginY);
+    const d4 = Math.hypot(w - portalOriginX, h - portalOriginY);
+    maxRadius = Math.max(d1, d2, d3, d4) * 1.03;
+  }
+
+  computePortalGeometry();
+
+  function applyHeroAperture(radius: number) {
+    if (!heroForeground) return;
+
+    if (radius <= 0.001) {
+      heroForeground.style.removeProperty("mask-image");
+      heroForeground.style.removeProperty("-webkit-mask-image");
+      heroForeground.style.visibility = "visible";
+      heroForeground.style.pointerEvents = "auto";
+      return;
+    }
+
+    if (radius >= maxRadius) {
+      heroForeground.style.visibility = "hidden";
+      heroForeground.style.pointerEvents = "none";
+      return;
+    }
+
+    heroForeground.style.visibility = "visible";
+    heroForeground.style.pointerEvents = "auto";
+
+    // Circular hole in hero foreground (MASK LIVES ON HERO FOREGROUND ONLY)
+    const maskStr = `radial-gradient(circle ${radius.toFixed(1)}px at ${portalOriginX.toFixed(1)}px ${portalOriginY.toFixed(1)}px, transparent 0px, transparent ${radius.toFixed(1)}px, #000000 ${(radius + 0.5).toFixed(1)}px, #000000 100%)`;
+    heroForeground.style.setProperty("mask-image", maskStr);
+    heroForeground.style.setProperty("-webkit-mask-image", maskStr);
+  }
+
+  // Initial state at rest: radius = 0 (Hero 100% opaque, zero hole)
+  applyHeroAperture(0);
+
+  // =========================================================================
+  // 3. MASTER SCROLL RUNWAY (CONTROLS PROGRESS ONLY)
+  // =========================================================================
+  const masterProgressState = {
+    portalProgress: 0,
+    authorityProgress: 0,
+  };
+
+  function onMasterUpdate() {
+    // 1. Update Hero Portal Aperture (Hero layer only)
+    const p = masterProgressState.portalProgress;
+    let radius = 0;
+    if (p <= 0.001) {
+      radius = 0;
+    } else if (p <= 0.5) {
+      radius = (p / 0.5) * halfCoverageRadius;
+    } else {
+      const t = (p - 0.5) / 0.5;
+      radius = halfCoverageRadius + t * (maxRadius - halfCoverageRadius);
+    }
+    applyHeroAperture(radius);
+
+    // 2. Drive Child Authority Engine through pure normalized progress
+    authorityTimeline.progress(masterProgressState.authorityProgress, false);
+  }
+
+  const masterTimeline = gsap.timeline({
+    defaults: { ease: "none" },
+    onUpdate: onMasterUpdate,
+    scrollTrigger: {
+      id: "hero-authority-master",
+      trigger: runway,
+      start: "top top",
+      end: "bottom bottom",
+      pin: false, // CSS Sticky handles fixation; no pinSpacers or jumps
+      scrub: conditions.mobile ? 0.55 : 0.75, // Numeric scrub for smooth catch-up
+      invalidateOnRefresh: true,
+      onRefresh: () => {
+        computePortalGeometry();
+        onMasterUpdate();
+      },
+    },
+  });
+
+  /*
+    MASTER TIMELINE PROGRESS MAPPING:
+    - Phase 1 (0.00 -> 1.00): Hero Portal Aperture reveals Authority behind Hero
+    - Phase 2 (1.00 -> 6.10): Restored Pre-Portal Authority 3D Carousel + Conclusion Engine
+  */
+  masterTimeline
+    .to(masterProgressState, { portalProgress: 1.0, duration: 1.0 }, 0)
+    .to(masterProgressState, { authorityProgress: 1.0, duration: 5.1 }, 1.0);
+
   return () => {
-    timeline.scrollTrigger?.kill();
-    timeline.revert();
+    masterTimeline.scrollTrigger?.kill();
+    masterTimeline.revert();
+    authorityTimeline.kill();
+    if (heroForeground) {
+      heroForeground.style.removeProperty("mask-image");
+      heroForeground.style.removeProperty("-webkit-mask-image");
+      heroForeground.style.visibility = "";
+      heroForeground.style.pointerEvents = "";
+    }
     phrases.forEach((phrase) => {
       phrase.style.transform = "";
       phrase.style.opacity = "";
