@@ -10,9 +10,9 @@ import {
 } from "@/components/motion/motion.config";
 import { CustomCursor } from "@/components/motion/CustomCursor";
 import { gsap, ScrollTrigger, useGSAP } from "@/components/motion/motion.client";
-import { createAuthorityScene } from "@/components/motion/scenes/authority";
 import { createClosingScene } from "@/components/motion/scenes/closing";
 import { createFormScene } from "@/components/motion/scenes/form";
+import { createHeroAuthoritySequenceScene } from "@/components/motion/scenes/heroAuthoritySequence";
 import { createHeroScene } from "@/components/motion/scenes/hero";
 import { createPositioningScene } from "@/components/motion/scenes/positioning";
 import { createProcessScene } from "@/components/motion/scenes/process";
@@ -52,7 +52,7 @@ export function MotionRoot({ children }: MotionRootProps) {
       media.add(MOTION_QUERIES, (context) => {
         const conditions = context.conditions as MotionConditions;
         const disposeHero = createHeroScene(root, conditions);
-        const disposeAuthority = createAuthorityScene(root, conditions);
+        const disposeHeroAuthority = createHeroAuthoritySequenceScene(root, conditions);
         const disposeRedesign = createRedesignScene(root, conditions);
         const disposePositioning = createPositioningScene(root, conditions);
         const disposeProcess = createProcessScene(root, conditions);
@@ -65,7 +65,7 @@ export function MotionRoot({ children }: MotionRootProps) {
           disposeProcess?.();
           disposePositioning?.();
           disposeRedesign?.();
-          disposeAuthority?.();
+          disposeHeroAuthority?.();
           disposeHero?.();
         };
       });
